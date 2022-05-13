@@ -14,6 +14,11 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
     @Query(nativeQuery = true, value = "Select * from cart where user_id = :userId")
     public Cart getByUserId(@Param("userId") Long userId);
 
-    
+    @Query(nativeQuery = true, 
+    value = "select case when count(product_id) > 0 then true else false end from product_cart where cart_id = (select cart_id from cart where user_id = :userId) and product_id = :productId")
+    public int existsCartByProductId(@Param("userId") Long userId ,@Param("productId") Long productId);
+
+    @Query(nativeQuery = true, value = "select case when count(cart_id) > 0 then true else false end from cart where user_id = :userId")
+    public int existCart(@Param("userId") Long userId);
 
 }

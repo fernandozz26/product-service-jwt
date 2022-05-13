@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class AddToFavoriteModel {
-    private String username;
-    private Long productId;
+public class UpdateProductCartModel {
+    Long productCartId;
+    int quantity;
 }

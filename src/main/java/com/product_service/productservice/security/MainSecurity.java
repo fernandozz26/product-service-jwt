@@ -60,7 +60,7 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http)throws Exception{
         http.cors().and().csrf().disable()
         .authorizeRequests()
-        .antMatchers("/auth/**").permitAll() // para entrar aqui todos pueden entrar
+        .antMatchers("/auth/**","/product/**").permitAll() // para entrar aqui todos pueden entrar
         .anyRequest().authenticated() // para lo demas hay que estar autenticado
         .and() // y
         .exceptionHandling().authenticationEntryPoint(jwtEntryPoint) // envia el entry point

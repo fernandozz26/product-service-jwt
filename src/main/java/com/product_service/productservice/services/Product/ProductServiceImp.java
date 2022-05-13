@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class ProductServiceImp implements ProductService{
 
     @Autowired
@@ -40,35 +41,31 @@ public class ProductServiceImp implements ProductService{
         return null;
     }
 
-    @Transactional
     @Override
     public List<Product> getAllProduct(){
         List<Product> products = productRepository.findAll();
         return products;
     }
 
-    @Transactional
     @Override
     public Product getProductById(Long productId) {
         Product product = productRepository.getById(productId);
         return product;
     }
 
-    @Transactional
     @Override
     public List<ProductCart> getCartProducts(Long userId) {
         Cart cart= cartRepository.getByUserId(userId);
         List<ProductCart> productCarts = productCartRepository.getByCartId(cart.getCartId());
         return productCarts;
     }
-    @Transactional
+
     @Override
     public List<Favorite> getFavoriteProducts(Long userId) {
         List<Favorite> favorites = favoriteRepository.getByUserId(userId);
         return favorites;
     }
 
-    @Transactional
     @Override
     public List<CategoryProduct> getProductsByCategory(Long categoryId) {
         List<CategoryProduct> categoryProducts = categoryProductRepository.getByCategoryId(categoryId);
@@ -79,14 +76,12 @@ public class ProductServiceImp implements ProductService{
     public List<Product> getProductsBySale(Long saleId) {
         // TODO Auto-generated method stub
         return null;
-    }
-    @Transactional    
+    }    
     @Override
     public List<Category> getAllCategories(){
         List<Category> categories = categoryRepository.findAll();
         return categories;
     }
-    @Transactional
     @Override
     public Category getCategoryById(Long categoryId){
         Category category = categoryRepository.getById(categoryId);
@@ -94,7 +89,6 @@ public class ProductServiceImp implements ProductService{
     }
 
     @Override
-    @Transactional
     public void saveProduct(Product product) {
         productRepository.save(product);
         Product lastProduct = productRepository.getLastProduct();
@@ -115,7 +109,6 @@ public class ProductServiceImp implements ProductService{
         
     }
 
-    @Transactional
     @Override
     public void addProductToFavorite(Long productId, Long userId) {
         Long favoriteId = 0L;
@@ -125,46 +118,81 @@ public class ProductServiceImp implements ProductService{
         
     }
 
-    @Transactional
     @Override
     public void addProductToCar(Product product, int quantity, Long userId) {
         Cart cart = cartRepository.getByUserId(userId);
         ProductCart productCart = ProductCart.builder().cartId(0L).product(product).cartId(cart.getCartId()).quantity(quantity).build();
         productCartRepository.save(productCart);
     }
-    @Transactional
     @Override
     public void deleteProduct(Long productId) {
         productRepository.deleteById(productId);
     }
 
-    @Transactional
     @Override
-    public void deleteProductFavorite(Long productId, Long userId) {
-        Favorite favorite = favoriteRepository.getByUserIdAndProductId(userId, productId);
-        favoriteRepository.delete(favorite);
-        
+    public void deleteProductFavorite(Long favoriteId) {
+        favoriteRepository.deleteFavoriteById(favoriteId);
     }
-
-    @Transactional
     @Override
     public void deleteProductCart(Long productId, Long cartId) {
         ProductCart productCart = productCartRepository.getByUserIdAndProductId(cartId, productId);
         productCartRepository.delete(productCart);
     }
 
-    @Transactional
     @Override
     public void updateProduct(Product product) {
         productRepository.save(product);
         
     }
-    @Transactional
+
     @Override
-    public void updateCartProduct(Product product, int quantity, Long cartId) {
-        ProductCart productCart = productCartRepository.getByUserIdAndProductId(cartId, product.getProductId());
-        ProductCart newProductCart = ProductCart.builder().cartId(cartId).product(product).productCartId(productCart.getCartId()).quantity(quantity).build();
-        productCartRepository.save(newProductCart);
+    public void updateCartProduct(Long productCartId, int quantity) {
+        
+        productCartRepository.updateQuantityProductCart(quantity, productCartId);
     }
+
+    @Override
+    public List<Product> getProductsBySearch(String word) {
+        List<Product> products = productRepository.getProductsBySearch(word);
+        return products;
+    }
+
+    @Override
+    public List<Product> getProductsBySearchId(Long id) {
+        List<Product> products = productRepository.getProductsBySearchId(id);
+        return products;
+    }
+
+    
+
+    @Override
+    public boolean existFavoriteProduct(Long userId, Long productId) {
+        if(favoriteRepository.existsFavoriteByProductId(userId, productId) == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean existCartProduct(Long userId, Long productId) {
+        if(cartRepository.existsCartByProductId(userId, productId) == 1){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ProductCart getProductCartByCartId(Long cartId, Long productId) {
+        ProductCart productCart = productCartRepository.getByCartId(cartId, productId);
+        return productCart;
+    }
+
+    @Override
+    public void addProductToCar(ProductCart productCart) {
+        productCartRepository.save(productCart);
+    }
+
+    
   
 }

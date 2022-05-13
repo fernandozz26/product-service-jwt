@@ -11,5 +11,5 @@ public class AddToCartModel {
     
     private Long productId;
     private int quantity;
-    private Long userId;
+    private String username;
 }
