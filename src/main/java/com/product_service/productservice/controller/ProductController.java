@@ -195,6 +195,23 @@ public class ProductController {
         }
     }
 
+                    /// Procedures
+    @PostMapping(value = "/product/pay/cart", consumes = {MediaType.APPLICATION_JSON_VALUE},
+    produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<String> payCart(@RequestBody CartIdModel cartId, BindingResult result){
+        if(!result.hasErrors()){
+            try {
+                System.out.print(cartId);
+                productService.payCart(cartId.getCardId());
+            } catch (Exception e) {
+                return ResponseEntity.internalServerError().build();
+            }
+            return ResponseEntity.accepted().build();
+        }else{
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, this.formatMessage(result));
+        }
+    }
+    
     // Updating data
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -246,6 +263,7 @@ public class ProductController {
     }
     
     // Deleting data
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/product/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable("id") Long id){
@@ -259,7 +277,6 @@ public class ProductController {
         }
     }
 
-
     @DeleteMapping("/product/favorite/{id}")
     public ResponseEntity<String> deleteFavoriteProduct(@PathVariable("id") Long id){
         try{
@@ -272,9 +289,9 @@ public class ProductController {
     }
     
     @DeleteMapping("/product/cart/{id}")
-    public ResponseEntity<String> deleteCatProduct(@PathVariable("id") Long id){
+    public ResponseEntity<String> deleteCatProduct(@PathVariable("id") Long productCartId){
         try{
-            productService.deleteProductFavorite(id);
+            productService.deleteProductCart(productCartId);
             return ResponseEntity.accepted().build();
         }catch(Exception ex){
             System.out.println(ex.getMessage());
@@ -282,6 +299,8 @@ public class ProductController {
         }
     }
     // Msg Format
+
+    
 
     private String formatMessage(BindingResult result){
         List<Map<String,String>> errors = result.getFieldErrors().stream()

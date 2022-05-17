@@ -37,10 +37,13 @@ public interface ProductService {
 
     public void deleteProduct(Long productId);
     public void deleteProductFavorite(Long productId);
-    public void deleteProductCart(Long productId, Long userId);
+    public void deleteProductCart(Long productId);
 
     // update products
     public void updateProduct(Product product);
     public void updateCartProduct(Long productCartId, int quantity);
+
+    // storage procedure
+    public void payCart(int cartId);
 
 }

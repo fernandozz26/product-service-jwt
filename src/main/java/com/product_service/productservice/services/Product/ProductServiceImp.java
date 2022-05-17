@@ -55,8 +55,8 @@ public class ProductServiceImp implements ProductService{
 
     @Override
     public List<ProductCart> getCartProducts(Long userId) {
-        Cart cart= cartRepository.getByUserId(userId);
-        List<ProductCart> productCarts = productCartRepository.getByCartId(cart.getCartId());
+        Long lastCartId= cartRepository.getByUserId(userId);
+        List<ProductCart> productCarts = productCartRepository.getByCartId(lastCartId);
         return productCarts;
     }
 
@@ -86,6 +86,18 @@ public class ProductServiceImp implements ProductService{
     public Category getCategoryById(Long categoryId){
         Category category = categoryRepository.getById(categoryId);
         return category;
+    }
+
+    @Override
+    public List<Product> getProductsBySearch(String word) {
+        List<Product> products = productRepository.getProductsBySearch(word);
+        return products;
+    }
+
+    @Override
+    public List<Product> getProductsBySearchId(Long id) {
+        List<Product> products = productRepository.getProductsBySearchId(id);
+        return products;
     }
 
     @Override
@@ -120,8 +132,8 @@ public class ProductServiceImp implements ProductService{
 
     @Override
     public void addProductToCar(Product product, int quantity, Long userId) {
-        Cart cart = cartRepository.getByUserId(userId);
-        ProductCart productCart = ProductCart.builder().cartId(0L).product(product).cartId(cart.getCartId()).quantity(quantity).build();
+        Long lastCartId = cartRepository.getByUserId(userId);
+        ProductCart productCart = ProductCart.builder().cartId(0L).product(product).cartId(lastCartId).quantity(quantity).build();
         productCartRepository.save(productCart);
     }
     @Override
@@ -134,9 +146,8 @@ public class ProductServiceImp implements ProductService{
         favoriteRepository.deleteFavoriteById(favoriteId);
     }
     @Override
-    public void deleteProductCart(Long productId, Long cartId) {
-        ProductCart productCart = productCartRepository.getByUserIdAndProductId(cartId, productId);
-        productCartRepository.delete(productCart);
+    public void deleteProductCart(Long productCartId) {
+        productCartRepository.deleteById(productCartId);
     }
 
     @Override
@@ -150,20 +161,6 @@ public class ProductServiceImp implements ProductService{
         
         productCartRepository.updateQuantityProductCart(quantity, productCartId);
     }
-
-    @Override
-    public List<Product> getProductsBySearch(String word) {
-        List<Product> products = productRepository.getProductsBySearch(word);
-        return products;
-    }
-
-    @Override
-    public List<Product> getProductsBySearchId(Long id) {
-        List<Product> products = productRepository.getProductsBySearchId(id);
-        return products;
-    }
-
-    
 
     @Override
     public boolean existFavoriteProduct(Long userId, Long productId) {
@@ -191,6 +188,11 @@ public class ProductServiceImp implements ProductService{
     @Override
     public void addProductToCar(ProductCart productCart) {
         productCartRepository.save(productCart);
+    }
+
+    @Override
+    public void payCart(int cartId) {
+        productCartRepository.payCart(cartId);
     }
 
     

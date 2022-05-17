@@ -40,4 +40,7 @@ public class ProductCart implements Serializable {
 
     @Column
     private int quantity;
+
+    @Column
+    private String productStatus;
 }
