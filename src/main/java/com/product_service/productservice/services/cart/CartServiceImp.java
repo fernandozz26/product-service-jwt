@@ -28,7 +28,7 @@ public class CartServiceImp  implements CartService{
 
     @Override
     public Cart getCardByUserId(Long userId) {
-        Cart cart = cartRepository.getByUserId(userId);
+        Cart cart = cartRepository.getCartByUserId(userId);
         return cart;
     }
     

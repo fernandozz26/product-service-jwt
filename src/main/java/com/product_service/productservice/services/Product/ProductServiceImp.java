@@ -55,7 +55,7 @@ public class ProductServiceImp implements ProductService{
 
     @Override
     public List<ProductCart> getCartProducts(Long userId) {
-        Long lastCartId= cartRepository.getByUserId(userId);
+        Long lastCartId= cartRepository.getCartIdByUserId(userId);
         List<ProductCart> productCarts = productCartRepository.getByCartId(lastCartId);
         return productCarts;
     }
@@ -132,7 +132,7 @@ public class ProductServiceImp implements ProductService{
 
     @Override
     public void addProductToCar(Product product, int quantity, Long userId) {
-        Long lastCartId = cartRepository.getByUserId(userId);
+        Long lastCartId = cartRepository.getCartIdByUserId(userId);
         ProductCart productCart = ProductCart.builder().cartId(0L).product(product).cartId(lastCartId).quantity(quantity).build();
         productCartRepository.save(productCart);
     }
